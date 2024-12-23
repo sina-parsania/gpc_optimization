@@ -59,23 +59,23 @@ The input dataset is a JSON file (`NASA-iPSC-1993-3.1-cln-sample.json`) located 
 ```json
 {
   "Job Number": 1,
-  "Submit Time": 102,
-  "Wait Time": 276,
-  "Run Time": 940,
-  "Number of Allocated Processors": 54,
-  "Average CPU Time Used": 176.4205293593,
-  "Used Memory": 7934,
-  "Requested Number of Processors": 7,
-  "Requested Time": 732,
-  "Requested Memory": 6196,
-  "Status": "Completed",
-  "User ID": 1011,
-  "Group ID": 279,
-  "Executable Number": 30,
-  "Queue Number": 7,
-  "Partition Number": 4,
-  "Preceding Job Number": 14,
-  "Think Time from Preceding Job": 79.5186194769
+  "Submit Time": 0,
+  "Wait Time": -1,
+  "Run Time": 1451,
+  "Number of Allocated Processors": 128,
+  "Average CPU Time Used": -1,
+  "Used Memory": -1,
+  "Requested Number of Processors": -1,
+  "Requested Time": -1,
+  "Requested Memory": -1,
+  "Status": -1,
+  "User ID": 1,
+  "Group ID": 1,
+  "Executable Number": -1,
+  "Queue Number": -1,
+  "Partition Number": -1,
+  "Preceding Job Number": -1,
+  "Think Time from Preceding Job": -1
 }
 ```
 
