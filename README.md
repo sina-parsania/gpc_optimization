@@ -45,7 +45,7 @@ Before running the project, ensure the following:
 │   ├── GPCCloudSim.java         # GPC-based scheduling
 │   ├── GAGWOCloudSim.java       # Hybrid GA-GWO scheduling
 ├── resources/
-│   └── job_scheduling_dataset.json   # Input dataset for tasks
+│   └── NASA-iPSC-1993-3.1-cln-sample.json   # Input dataset for tasks
 ├── lib/                         # Required .jar files (CloudSim, Jackson)
 ├── README.md                    # Documentation
 ```
@@ -54,7 +54,7 @@ Before running the project, ensure the following:
 
 ## **Input**
 
-The input dataset is a JSON file (`job_scheduling_dataset.json`) located in the `resources` directory. Each task in the dataset has the following fields:
+The input dataset is a JSON file (`NASA-iPSC-1993-3.1-cln-sample.json`) located in the `resources` directory. Each task in the dataset has the following fields:
 
 ```json
 {
@@ -127,7 +127,7 @@ Load Balancing: 0.32
      ```
 
 3. **Ensure Proper Paths**:
-   - Place the `job_scheduling_dataset.json` file in the `resources` folder (outside `src`).
+   - Place the `NASA-iPSC-1993-3.1-cln-sample.json` file in the `resources` folder (outside `src`).
    - Include the required `.jar` files in the `lib` folder.
 
 ---

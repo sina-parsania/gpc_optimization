@@ -10,7 +10,6 @@ import java.util.*;
 
 public class GAGWOCloudSim {
 
-    private static final int nTasks = 30; // Number of tasks
     private static final int nVMs = 5; // Number of virtual machines
     private static final int MaxIteration = 1000; // Maximum number of iterations
     private static final int nPop = 20; // Population size
@@ -19,8 +18,8 @@ public class GAGWOCloudSim {
         int[] position; // Task allocation to VMs
         double fitness;
 
-        Solution(int nTasks) {
-            position = new int[nTasks];
+        Solution(int taskCount) {
+            position = new int[taskCount];
             fitness = Double.POSITIVE_INFINITY;
         }
     }
@@ -89,7 +88,7 @@ public class GAGWOCloudSim {
             List<Vm> vmList = createVMs(broker.getId(), nVMs);
             broker.submitVmList(vmList);
 
-            Task[] tasks = loadTasks("resources/job_scheduling_dataset.json");
+            Task[] tasks = loadTasks("resources/NASA-iPSC-1993-3.1-cln-sample.json");
             List<Cloudlet> cloudletList = createCloudlets(broker.getId(), tasks);
             broker.submitCloudletList(cloudletList);
 
@@ -171,14 +170,15 @@ public class GAGWOCloudSim {
     }
 
     private static Solution runGAGWO(Task[] tasks) {
+        int taskCount = tasks.length;
         Random rand = new Random();
         Solution[] population = new Solution[nPop];
-        Solution bestSolution = new Solution(nTasks);
+        Solution bestSolution = new Solution(taskCount);
 
         // Initialize Population
         for (int i = 0; i < nPop; i++) {
-            population[i] = new Solution(nTasks);
-            for (int j = 0; j < nTasks; j++) {
+            population[i] = new Solution(taskCount);
+            for (int j = 0; j < taskCount; j++) {
                 population[i].position[j] = rand.nextInt(nVMs);
             }
             population[i].fitness = calculateMakespan(population[i].position, tasks);
@@ -194,7 +194,7 @@ public class GAGWOCloudSim {
             for (int i = 0; i < nPop; i++) {
                 double a = 2.0 - (2.0 * iter / MaxIteration);
 
-                for (int j = 0; j < nTasks; j++) {
+                for (int j = 0; j < taskCount; j++) {
                     // GWO Position Update
                     double A1 = 2 * a * rand.nextDouble() - a;
                     double C1 = 2 * rand.nextDouble();
@@ -225,8 +225,14 @@ public class GAGWOCloudSim {
     }
 
     private static double calculateMakespan(int[] assignment, Task[] tasks) {
+        if (assignment.length != tasks.length) {
+            throw new IllegalArgumentException("Assignment and tasks array sizes must match.");
+        }
         double[] vmTimes = new double[nVMs];
         for (int i = 0; i < assignment.length; i++) {
+            if (assignment[i] < 0 || assignment[i] >= nVMs) {
+                throw new IllegalArgumentException("Invalid VM index in assignment array: " + assignment[i]);
+            }
             vmTimes[assignment[i]] += tasks[i].runTime;
         }
         return Arrays.stream(vmTimes).max().orElse(0);

@@ -14,9 +14,7 @@ import java.util.Arrays;
 
 public class GPCCloudSim {
 
-    private static final int nTasks = 30; // Number of tasks
     private static final int nVMs = 5; // Number of virtual machines
-    private static final int MaxIteration = 1000; // Maximum number of iterations
     private static final int nPop = 20; // Number of workers (population)
 
     static class Stone {
@@ -93,26 +91,13 @@ public class GPCCloudSim {
             // 2. Create Datacenter and VMs
             Datacenter datacenter = createDatacenter();
 
-            // System.out.println("List of Hosts in Datacenter:");
-            // for (Host host : datacenter.getHostList()) {
-            // System.out.println(
-            // "Host #" + host.getId() + " with RAM: " +
-            // host.getRamProvisioner().getAvailableRam() + " MB");
-            // }
-
             DatacenterBroker broker = new DatacenterBroker("Broker");
             List<Vm> vmList = createVMs(broker.getId(), nVMs);
             broker.submitVmList(vmList);
 
-            // System.out.println("List of VMs:");
-            // for (Vm vm : vmList) {
-            // System.out.println("VM #" + vm.getId() + " with RAM: " + vm.getRam() + "
-            // MB");
-            // }
-
             // 3. Load dataset and create Cloudlets
             ObjectMapper objectMapper = new ObjectMapper();
-            Task[] tasks = objectMapper.readValue(new File("resources/job_scheduling_dataset.json"), Task[].class);
+            Task[] tasks = objectMapper.readValue(new File("resources/NASA-iPSC-1993-3.1-cln-sample.json"), Task[].class);
             List<Cloudlet> cloudletList = createCloudlets(broker.getId(), tasks);
             broker.submitCloudletList(cloudletList);
 
@@ -199,12 +184,12 @@ public class GPCCloudSim {
     private static Stone runGPC(Task[] tasks) {
         Random rand = new Random();
         Stone[] pop = new Stone[nPop];
-        Stone bestWorker = new Stone(nTasks);
+        Stone bestWorker = new Stone(tasks.length);
 
         for (int i = 0; i < nPop; i++) {
-            pop[i] = new Stone(nTasks);
-            for (int j = 0; j < nTasks; j++) {
-                pop[i].position[j] = rand.nextInt(nVMs);
+            pop[i] = new Stone(tasks.length);
+            for (int j = 0; j < tasks.length; j++) {
+                pop[i].position[j] = rand.nextInt(nVMs); // Ensure valid VM index
             }
             pop[i].cost = calculateMakespan(pop[i].position, tasks);
             if (pop[i].cost < bestWorker.cost) {
@@ -215,8 +200,14 @@ public class GPCCloudSim {
     }
 
     private static double calculateMakespan(int[] assignment, Task[] tasks) {
+        if (assignment.length != tasks.length) {
+            throw new IllegalArgumentException("Assignment and tasks array sizes must match.");
+        }
         double[] vmTimes = new double[nVMs];
         for (int i = 0; i < assignment.length; i++) {
+            if (assignment[i] < 0 || assignment[i] >= nVMs) {
+                throw new IllegalArgumentException("Invalid VM index in assignment array: " + assignment[i]);
+            }
             vmTimes[assignment[i]] += tasks[i].runTime;
         }
         return Arrays.stream(vmTimes).max().orElse(0);
